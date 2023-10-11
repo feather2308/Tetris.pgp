@@ -88,6 +88,7 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 	public void paint(Graphics g) {
 		offscreen = createImage(getSize().width,getSize().height);
 		bufferGraphics = offscreen.getGraphics();
+		paintComponents(bufferGraphics);
 		
 		for(int i = 0; i < TetrisData.ROW; i++) {
 			for(int k = 0; k < TetrisData.COL; k++) {
