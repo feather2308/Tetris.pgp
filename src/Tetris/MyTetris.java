@@ -1,12 +1,6 @@
 package Tetris;
 
-import java.awt.EventQueue;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-
+import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
@@ -14,7 +8,11 @@ import javax.swing.border.EmptyBorder;
 
 import java.io.*;
 import java.net.*;
-import java.util.*;
+import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.sound.sampled.*;
 
 @SuppressWarnings("serial")
 public class MyTetris extends JFrame {	
@@ -80,6 +78,7 @@ public class MyTetris extends JFrame {
 	public MyTetris() {
 		setBounds(100, 100, 350, 500);
 		renderUIBase();
+		function.playSound("src/bgm.wav");
 	}
 
 	public static TetrisCanvas getTetrisCanvas() {
@@ -1029,6 +1028,25 @@ public class MyTetris extends JFrame {
 			byte[] by = newLeaderBoard.toString().getBytes();
 			output.write(by);
 			output.close();
+	    }
+	    
+	    public static void playSound(String filename) { // d:/test/gameover.wav
+	        try {
+	            File soundFile = new File(filename);
+	            final Clip clip = AudioSystem.getClip();
+	            clip.addLineListener(new LineListener() {
+	                @Override
+	                public void update(LineEvent event) {
+	                    //CLOSE, OPEN, START, STOP
+	                    if (event.getType() == LineEvent.Type.STOP)
+	                        clip.close();
+	                }
+	            });
+	            clip.open(AudioSystem.getAudioInputStream(soundFile));
+	            clip.start();
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
 	    }
 	}
 }
