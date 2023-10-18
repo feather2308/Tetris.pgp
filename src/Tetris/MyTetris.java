@@ -1030,7 +1030,7 @@ public class MyTetris extends JFrame {
 			output.close();
 	    }
 	    
-	    public static void playSound(String filename) { // d:/test/gameover.wav
+	    public static void playSound(String filename) { // src/bgm.wav
 	        try {
 	            File soundFile = new File(filename);
 	            final Clip clip = AudioSystem.getClip();
