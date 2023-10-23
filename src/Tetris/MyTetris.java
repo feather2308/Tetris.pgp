@@ -78,7 +78,7 @@ public class MyTetris extends JFrame {
 	public MyTetris() {
 		setBounds(100, 100, 350, 500);
 		renderUIBase();
-		function.playSound("src/bgm.wav");
+		function.playSound("src/bgm.wav", true);
 	}
 
 	public static TetrisCanvas getTetrisCanvas() {
@@ -1030,7 +1030,7 @@ public class MyTetris extends JFrame {
 			output.close();
 	    }
 	    
-	    public static void playSound(String filename) { // src/bgm.wav
+	    public static void playSound(String filename, boolean i) { // src/bgm.wav
 	        try {
 	            File soundFile = new File(filename);
 	            final Clip clip = AudioSystem.getClip();
@@ -1038,8 +1038,18 @@ public class MyTetris extends JFrame {
 	                @Override
 	                public void update(LineEvent event) {
 	                    //CLOSE, OPEN, START, STOP
-	                    if (event.getType() == LineEvent.Type.STOP)
-	                        clip.close();
+	                    if (event.getType() == LineEvent.Type.STOP) {
+	                    	clip.close();
+	                    	if(i) {
+	                    		try {
+	                                AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(soundFile);
+	                                clip.open(audioInputStream); // 다시 열고
+	                                clip.start(); // 재생 시작
+	                            } catch (Exception e) {
+	                                e.printStackTrace();
+	                            }
+	                    	}
+	                    }
 	                }
 	            });
 	            clip.open(AudioSystem.getAudioInputStream(soundFile));

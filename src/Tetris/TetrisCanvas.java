@@ -176,6 +176,7 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 			try {
 				if(makeNew) {
 					current = next;
+					current.setSound();
 					miri = current.deepCopy();
 					gameCheck(false);
 					if(itemBizarrePieceCount > tmpIBPC) {
@@ -254,6 +255,7 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 						hold = current;
 						rotateSavePiece(hold);
 						current = next;
+						current.setSound();
 						miri = current.deepCopy();
 						pieceMake();
 						current.convertSave();
@@ -262,6 +264,7 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 						hold = current;
 						rotateSavePiece(hold);
 						current = temp;
+						current.setSound();
 						current.convertSave();
 						current.resetPosition();
 						miri = current.deepCopy();

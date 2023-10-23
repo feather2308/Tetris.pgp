@@ -2,6 +2,7 @@ package Tetris.Block;
 
 import java.awt.Point;
 
+import Tetris.MyTetris;
 import Tetris.TetrisData;
 
 public abstract class Piece implements Cloneable {
@@ -11,6 +12,7 @@ public abstract class Piece implements Cloneable {
 	protected TetrisData data;
 	protected Point center;
 	protected boolean save = true;
+	protected boolean isSound = false;
 	protected int type;
 	protected int roteType;
 	
@@ -18,6 +20,7 @@ public abstract class Piece implements Cloneable {
 		Piece copy = null;
 		try {
 	        copy = (Piece) super.clone();
+	        copy.setSound(1);
 	        copy.r = r.clone();
 	        copy.c = c.clone();
 	        copy.center = new Point(center);
@@ -151,9 +154,15 @@ public abstract class Piece implements Cloneable {
 			if(isOverlap(DOWN) != true) {
 				center.y++;
 			} else {
+				if(isSound)
+					MyTetris.function.playSound("src/block.wav", false);
 				return true;
 			}
-		} else { return true; }
+		} else {
+			if(isSound)
+				MyTetris.function.playSound("src/block.wav", false);
+			return true;
+		}
 		return false;
 	}
 	
@@ -284,5 +293,13 @@ public abstract class Piece implements Cloneable {
 	public void resetPosition() {
 		center.x = 5;
 		center.y = -1;
+	}
+	
+	public void setSound() {
+		isSound = true;
+	}
+	
+	public void setSound(int i) {
+		isSound = false;
 	}
 }
