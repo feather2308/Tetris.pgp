@@ -2,7 +2,9 @@ package Tetris;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
@@ -11,8 +13,6 @@ import java.net.*;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.sound.sampled.*;
 
 @SuppressWarnings("serial")
 public class MyTetris extends JFrame {	
@@ -34,6 +34,8 @@ public class MyTetris extends JFrame {
 	
 	private JLabel nextPieceLabel;
 	private JLabel holdPieceLabel;
+	
+	private SoundHandler soundHandler;
 	
 	protected static boolean connect = false;
 	protected static boolean serverOpen = false;
@@ -78,7 +80,9 @@ public class MyTetris extends JFrame {
 	public MyTetris() {
 		setBounds(100, 100, 350, 500);
 		renderUIBase();
-		function.playSound("src/bgm.wav", true);
+		
+		soundHandler = new SoundHandler("src/bgm.wav");
+		soundHandler.controlSound(0.8f);
 	}
 
 	public static TetrisCanvas getTetrisCanvas() {
@@ -173,62 +177,65 @@ public class MyTetris extends JFrame {
 		gbc_baseTetrisText.gridy = 1;
 		baseContentPane.add(baseTetrisText, gbc_baseTetrisText);
 		baseTetrisText.setColumns(10);
+	
+		//버튼 추가
+		JButton baseMultiPlayButton = new JButton("게임하기");
+		baseMultiPlayButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+	            baseCardLayout.show(baseCardContentPane, "Server");
+				setTitle("테트리스 게임하기");
+			}
+		});
+		
+		GridBagConstraints gbc_baseMultiPlayButton = new GridBagConstraints();
+		gbc_baseMultiPlayButton.fill = GridBagConstraints.BOTH;
+		gbc_baseMultiPlayButton.insets = new Insets(0, 0, 5, 5);
+		gbc_baseMultiPlayButton.gridx = 2;
+		gbc_baseMultiPlayButton.gridy = 3;
+		baseContentPane.add(baseMultiPlayButton, gbc_baseMultiPlayButton);
+		
+		JButton baseLeaderBoardButton = new JButton("점수판 보기");
+		baseLeaderBoardButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				function.refreshLeaderBoard();
+			}
+		});
+		
+		GridBagConstraints gbc_baseLeaderBoardButton = new GridBagConstraints();
+		gbc_baseLeaderBoardButton.fill = GridBagConstraints.HORIZONTAL;
+		gbc_baseLeaderBoardButton.insets = new Insets(0, 0, 5, 5);
+		gbc_baseLeaderBoardButton.gridx = 2;
+		gbc_baseLeaderBoardButton.gridy = 4;
+		baseContentPane.add(baseLeaderBoardButton, gbc_baseLeaderBoardButton);
+		
+		JButton baseKeyHelpButton = new JButton("도움말");
+		baseKeyHelpButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				keyHelp.setVisible(true);
+			}
+		});
+		
+		GridBagConstraints gbc_baseKeyHelpButton = new GridBagConstraints();
+		gbc_baseKeyHelpButton.fill = GridBagConstraints.HORIZONTAL;
+		gbc_baseKeyHelpButton.insets = new Insets(0, 0, 5, 5);
+		gbc_baseKeyHelpButton.gridx = 2;
+		gbc_baseKeyHelpButton.gridy = 5;
+		baseContentPane.add(baseKeyHelpButton, gbc_baseKeyHelpButton);
+		
+		JButton baseExitButton = new JButton("나가기");
+		baseExitButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);
+			}
+		});
+		
 		GridBagConstraints gbc_baseExitButton = new GridBagConstraints();
 		gbc_baseExitButton.insets = new Insets(0, 0, 5, 5);
+		gbc_baseExitButton.fill = GridBagConstraints.BOTH;
+		gbc_baseExitButton.gridx = 2;
+		gbc_baseExitButton.gridy = 6;
+		baseContentPane.add(baseExitButton, gbc_baseExitButton);
 		
-				JButton baseExitButton = new JButton("나가기");
-				baseExitButton.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						System.exit(0);
-					}
-				});
-						GridBagConstraints gbc_baseMultiPlayButton = new GridBagConstraints();
-						
-								JButton baseMultiPlayButton = new JButton("게임하기");
-								baseMultiPlayButton.addActionListener(new ActionListener() {
-									public void actionPerformed(ActionEvent e) {
-	            baseCardLayout.show(baseCardContentPane, "Server");
-										setTitle("테트리스 게임하기");
-									}
-								});
-								
-										gbc_baseMultiPlayButton.fill = GridBagConstraints.BOTH;
-										gbc_baseMultiPlayButton.insets = new Insets(0, 0, 5, 5);
-										gbc_baseMultiPlayButton.gridx = 2;
-										gbc_baseMultiPlayButton.gridy = 3;
-										baseContentPane.add(baseMultiPlayButton, gbc_baseMultiPlayButton);
-						
-						JButton baseLeaderBoardButton = new JButton("점수판 보기");
-						baseLeaderBoardButton.addActionListener(new ActionListener() {
-							public void actionPerformed(ActionEvent e) {
-								function.refreshLeaderBoard();
-							}
-						});
-						GridBagConstraints gbc_baseLeaderBoardButton = new GridBagConstraints();
-						gbc_baseLeaderBoardButton.fill = GridBagConstraints.HORIZONTAL;
-						gbc_baseLeaderBoardButton.insets = new Insets(0, 0, 5, 5);
-						gbc_baseLeaderBoardButton.gridx = 2;
-						gbc_baseLeaderBoardButton.gridy = 4;
-						baseContentPane.add(baseLeaderBoardButton, gbc_baseLeaderBoardButton);
-						
-						JButton baseKeyHelpButton = new JButton("도움말");
-						baseKeyHelpButton.addActionListener(new ActionListener() {
-							public void actionPerformed(ActionEvent e) {
-								keyHelp.setVisible(true);
-							}
-						});
-						GridBagConstraints gbc_baseKeyHelpButton = new GridBagConstraints();
-						gbc_baseKeyHelpButton.fill = GridBagConstraints.HORIZONTAL;
-						gbc_baseKeyHelpButton.insets = new Insets(0, 0, 5, 5);
-						gbc_baseKeyHelpButton.gridx = 2;
-						gbc_baseKeyHelpButton.gridy = 5;
-						baseContentPane.add(baseKeyHelpButton, gbc_baseKeyHelpButton);
-				
-						gbc_baseExitButton.fill = GridBagConstraints.BOTH;
-						gbc_baseExitButton.gridx = 2;
-						gbc_baseExitButton.gridy = 6;
-						baseContentPane.add(baseExitButton, gbc_baseExitButton);
-
 		//
 		// baseContentPane 끝
 		//
@@ -249,76 +256,143 @@ public class MyTetris extends JFrame {
 		GridBagConstraints gbc_baseServerTetrisText = new GridBagConstraints();
 		gbc_baseServerTetrisText.gridwidth = 3;
 		
-			JTextField baseServerTetrisText = new JTextField();
-			baseServerTetrisText.setEditable(false);
-			baseServerTetrisText.setHorizontalAlignment(SwingConstants.CENTER);
-			baseServerTetrisText.setText("TETRIS");
+		JTextField baseServerTetrisText = new JTextField();
+		baseServerTetrisText.setEditable(false);
+		baseServerTetrisText.setHorizontalAlignment(SwingConstants.CENTER);
+		baseServerTetrisText.setText("TETRIS");
 			
-					gbc_baseServerTetrisText.insets = new Insets(0, 0, 5, 5);
-					gbc_baseServerTetrisText.fill = GridBagConstraints.BOTH;
-					gbc_baseServerTetrisText.gridx = 1;
-					gbc_baseServerTetrisText.gridy = 1;
-					baseMultiContentPane.add(baseServerTetrisText, gbc_baseServerTetrisText);
-					baseServerTetrisText.setColumns(10);
+		gbc_baseServerTetrisText.insets = new Insets(0, 0, 5, 5);
+		gbc_baseServerTetrisText.fill = GridBagConstraints.BOTH;
+		gbc_baseServerTetrisText.gridx = 1;
+		gbc_baseServerTetrisText.gridy = 1;
+		baseMultiContentPane.add(baseServerTetrisText, gbc_baseServerTetrisText);
+		baseServerTetrisText.setColumns(10);
 		GridBagConstraints gbc_baseServerBackButton = new GridBagConstraints();
 		
-				JButton baseServerBackButton = new JButton("뒤로가기");
-				baseServerBackButton.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-	            baseCardLayout.show(baseCardContentPane, "Base");
-						setTitle("테트리스");
-					}
-				});
-						GridBagConstraints gbc_baseServerMultiPlayButton = new GridBagConstraints();
-						
-								JButton baseServerMultiPlayButton = new JButton("서버 접속하기");
-								baseServerMultiPlayButton.addActionListener(new ActionListener() {
-									public void actionPerformed(ActionEvent e) {
-										connectServer.setVisible(true);
-									}
-								});
-										GridBagConstraints gbc_baseServerSinglePlayButton = new GridBagConstraints();
-										
-										JButton baseServerSinglePlayButton = new JButton("서버 열기");
-										baseServerSinglePlayButton.addActionListener(new ActionListener() {
-											public void actionPerformed(ActionEvent e) {
-												openServer.setVisible(true);
-											}
-										});
-										
-										JButton baseSinglePlayButton = new JButton("혼자 놀기");
-										baseSinglePlayButton.addActionListener(new ActionListener() {
-											public void actionPerformed(ActionEvent e) {
-												renderUISingle();
-											}
-										});
-										GridBagConstraints gbc_baseSinglePlayButton = new GridBagConstraints();
-										gbc_baseSinglePlayButton.fill = GridBagConstraints.BOTH;
-										gbc_baseSinglePlayButton.insets = new Insets(0, 0, 5, 5);
-										gbc_baseSinglePlayButton.gridx = 2;
-										gbc_baseSinglePlayButton.gridy = 3;
-										baseMultiContentPane.add(baseSinglePlayButton, gbc_baseSinglePlayButton);
-										
-										gbc_baseServerSinglePlayButton.fill = GridBagConstraints.BOTH;
-										gbc_baseServerSinglePlayButton.insets = new Insets(0, 0, 5, 5);
-										gbc_baseServerSinglePlayButton.gridx = 2;
-										gbc_baseServerSinglePlayButton.gridy = 4;
-										
-										baseMultiContentPane.add(baseServerSinglePlayButton, gbc_baseServerSinglePlayButton);
-								
-										gbc_baseServerMultiPlayButton.fill = GridBagConstraints.BOTH;
-										gbc_baseServerMultiPlayButton.insets = new Insets(0, 0, 5, 5);
-										gbc_baseServerMultiPlayButton.gridx = 2;
-										gbc_baseServerMultiPlayButton.gridy = 5;
-										baseMultiContentPane.add(baseServerMultiPlayButton, gbc_baseServerMultiPlayButton);
-				
-						gbc_baseServerBackButton.fill = GridBagConstraints.BOTH;
-						gbc_baseServerBackButton.insets = new Insets(0, 0, 5, 5);
-						gbc_baseServerBackButton.gridx = 2;
-						gbc_baseServerBackButton.gridy = 6;
-						baseMultiContentPane.add(baseServerBackButton, gbc_baseServerBackButton);
+		JButton baseServerBackButton = new JButton("뒤로가기");
+		baseServerBackButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+        baseCardLayout.show(baseCardContentPane, "Base");
+				setTitle("테트리스");
+			}
+		});
+		GridBagConstraints gbc_baseServerMultiPlayButton = new GridBagConstraints();
+		
+		JButton baseServerMultiPlayButton = new JButton("서버 접속하기");
+		baseServerMultiPlayButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				connectServer.setVisible(true);
+			}
+		});
+		GridBagConstraints gbc_baseServerSinglePlayButton = new GridBagConstraints();
+		
+		JButton baseServerSinglePlayButton = new JButton("서버 열기");
+		baseServerSinglePlayButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				openServer.setVisible(true);
+			}
+		});
+		
+		JButton baseSinglePlayButton = new JButton("혼자 놀기");
+		baseSinglePlayButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				renderUISingle();
+			}
+		});
+		GridBagConstraints gbc_baseSinglePlayButton = new GridBagConstraints();
+		gbc_baseSinglePlayButton.fill = GridBagConstraints.BOTH;
+		gbc_baseSinglePlayButton.insets = new Insets(0, 0, 5, 5);
+		gbc_baseSinglePlayButton.gridx = 2;
+		gbc_baseSinglePlayButton.gridy = 3;
+		baseMultiContentPane.add(baseSinglePlayButton, gbc_baseSinglePlayButton);
+		
+		gbc_baseServerSinglePlayButton.fill = GridBagConstraints.BOTH;
+		gbc_baseServerSinglePlayButton.insets = new Insets(0, 0, 5, 5);
+		gbc_baseServerSinglePlayButton.gridx = 2;
+		gbc_baseServerSinglePlayButton.gridy = 4;
+		
+		baseMultiContentPane.add(baseServerSinglePlayButton, gbc_baseServerSinglePlayButton);
+
+		gbc_baseServerMultiPlayButton.fill = GridBagConstraints.BOTH;
+		gbc_baseServerMultiPlayButton.insets = new Insets(0, 0, 5, 5);
+		gbc_baseServerMultiPlayButton.gridx = 2;
+		gbc_baseServerMultiPlayButton.gridy = 5;
+		baseMultiContentPane.add(baseServerMultiPlayButton, gbc_baseServerMultiPlayButton);
+
+		gbc_baseServerBackButton.fill = GridBagConstraints.BOTH;
+		gbc_baseServerBackButton.insets = new Insets(0, 0, 5, 5);
+		gbc_baseServerBackButton.gridx = 2;
+		gbc_baseServerBackButton.gridy = 6;
+		baseMultiContentPane.add(baseServerBackButton, gbc_baseServerBackButton);
+		
+		//스피커 이미지 라벨
+		JLabel speakerImageLabel = new JLabel();
+		JLabel speakerImageLabel_2 = new JLabel();
+		BufferedImage image;
+		try {
+			image = ImageIO.read(new File("src/speaker.png"));
+
+			speakerImageLabel.setIcon(new ImageIcon(image.getScaledInstance(16, 16, Image.SCALE_SMOOTH)));
+			speakerImageLabel_2.setIcon(new ImageIcon(image.getScaledInstance(16, 16, Image.SCALE_SMOOTH)));
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		
+		GridBagConstraints gbc_speakerImageLabel = new GridBagConstraints();
+		gbc_speakerImageLabel.insets = new Insets(0, 0, 5, 5);
+		gbc_speakerImageLabel.fill = GridBagConstraints.EAST;
+		gbc_speakerImageLabel.gridx = 1;
+		gbc_speakerImageLabel.gridy = 7;
+		baseContentPane.add(speakerImageLabel, gbc_speakerImageLabel);
+		
+		GridBagConstraints gbc_speakerImageLabel_2 = new GridBagConstraints();
+		gbc_speakerImageLabel_2.insets = new Insets(0, 0, 5, 5);
+		gbc_speakerImageLabel_2.fill = GridBagConstraints.EAST;
+		gbc_speakerImageLabel_2.gridx = 1;
+		gbc_speakerImageLabel_2.gridy = 7;
+		baseMultiContentPane.add(speakerImageLabel_2, gbc_speakerImageLabel_2);
+		
+		//볼륨 조절 슬라이더
+		JSlider volumeSlider = new JSlider(JSlider.HORIZONTAL, 20, 100, 80);
+		JSlider volumeSlider_2 = new JSlider(JSlider.HORIZONTAL, 20, 100, 80);
+		
+        // 볼륨 조절 슬라이더 리스너
+        volumeSlider.addChangeListener(e -> {
+            int volume = volumeSlider.getValue();
+            volumeSlider_2.setValue(volume);
+            if(volume == 20) {
+            	soundHandler.controlSound(0);
+            } else {
+                soundHandler.controlSound((float) volume / 100);
+            }
+        });
+        
+		GridBagConstraints gbc_volumeSlider = new GridBagConstraints();
+		gbc_volumeSlider.insets = new Insets(0, 0, 5, 5);
+		gbc_volumeSlider.fill = GridBagConstraints.BOTH;
+		gbc_volumeSlider.gridx = 2;
+		gbc_volumeSlider.gridy = 7;
+		baseContentPane.add(volumeSlider, gbc_volumeSlider);
+		
+		// 볼륨 조절 슬라이더 리스너
+        volumeSlider_2.addChangeListener(e -> {
+            int volume = volumeSlider_2.getValue();
+            volumeSlider.setValue(volume);
+            if(volume == 20) {
+            	soundHandler.controlSound(0);
+            } else {
+                soundHandler.controlSound((float) volume / 100);
+            }
+        });
+        
+		GridBagConstraints gbc_volumeSlider_2 = new GridBagConstraints();
+		gbc_volumeSlider_2.insets = new Insets(0, 0, 5, 5);
+		gbc_volumeSlider_2.fill = GridBagConstraints.BOTH;
+		gbc_volumeSlider_2.gridx = 2;
+		gbc_volumeSlider_2.gridy = 7;
+		baseMultiContentPane.add(volumeSlider_2, gbc_volumeSlider_2);
 	}
-	
+
 	private void renderUIBaseServerTab() {
 		CardLayout baseCardLayout =	(CardLayout)this.getContentPane().getLayout();
 		baseCardLayout.show(this.getContentPane(), "Server");
@@ -360,7 +434,7 @@ public class MyTetris extends JFrame {
 		});
 		gameMenu.add(mntmExitMenuItem);
 		
-		tetrisCanvas = new TetrisCanvas();
+		tetrisCanvas = new TetrisCanvas(soundHandler);
 		singleContentPane.add(tetrisCanvas, BorderLayout.CENTER);
 		tetrisCanvas.setLayout(null);
 		
@@ -402,7 +476,7 @@ public class MyTetris extends JFrame {
 		this.revalidate();	
 		multiContentPane.setLayout(new BorderLayout(0, 0));
 		
-		tetrisCanvas = new TetrisCanvas();
+		tetrisCanvas = new TetrisCanvas(soundHandler);
 		multiContentPane.add(tetrisCanvas, BorderLayout.CENTER);
 		tetrisCanvas.setLayout(null);
 		
@@ -1028,35 +1102,6 @@ public class MyTetris extends JFrame {
 			byte[] by = newLeaderBoard.toString().getBytes();
 			output.write(by);
 			output.close();
-	    }
-	    
-	    public static void playSound(String filename, boolean i) { // src/bgm.wav
-	        try {
-	            File soundFile = new File(filename);
-	            final Clip clip = AudioSystem.getClip();
-	            clip.addLineListener(new LineListener() {
-	                @Override
-	                public void update(LineEvent event) {
-	                    //CLOSE, OPEN, START, STOP
-	                    if (event.getType() == LineEvent.Type.STOP) {
-	                    	clip.close();
-	                    	if(i) {
-	                    		try {
-	                                AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(soundFile);
-	                                clip.open(audioInputStream); // 다시 열고
-	                                clip.start(); // 재생 시작
-	                            } catch (Exception e) {
-	                                e.printStackTrace();
-	                            }
-	                    	}
-	                    }
-	                }
-	            });
-	            clip.open(AudioSystem.getAudioInputStream(soundFile));
-	            clip.start();
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	        }
 	    }
 	}
 }

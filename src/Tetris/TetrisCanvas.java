@@ -26,10 +26,12 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 	protected TetrisData data;
 	protected int margin = 20;
 	protected boolean stop, makeNew;
+	
 	protected Piece current;
 	protected Piece next;
 	protected Piece hold;
 	protected Piece miri;
+	
 	protected int interval = 2000;
 	protected int level = TetrisData.BASE_SPEED;
 	protected int lineTmp, aLine = 0;
@@ -40,8 +42,11 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 	protected Graphics bufferGraphics = null;
 	protected Image offscreen;
 	
-	public TetrisCanvas() {
+	protected SoundHandler soundHandler;
+	
+	public TetrisCanvas(SoundHandler soundHandler) {
 		data = new TetrisData();
+		this.soundHandler = soundHandler;
 		addKeyListener(this);
 		colors = new Color[11];
 		colors[0] = new Color(133, 133, 133);//미리보기색
@@ -176,7 +181,6 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 			try {
 				if(makeNew) {
 					current = next;
-					current.setSound();
 					miri = current.deepCopy();
 					gameCheck(false);
 					if(itemBizarrePieceCount > tmpIBPC) {
@@ -190,6 +194,7 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 					if(current.moveDown()) {
 						makeNew = true;
 						gameCheck(true);
+						soundHandler.playSound("src/block.wav");
 						current = null;
 						miri = null;
 						data.removeLiness();
@@ -230,6 +235,7 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 				if(current.moveDown()) {
 					makeNew = true;
 					gameCheck(true);
+					soundHandler.playSound("src/block.wav");
 					current = null;
 					miri = null;
 					data.removeLiness();
@@ -242,6 +248,7 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 				while(!current.moveDown()) data.setScore(10);
 				makeNew = true;
 				gameCheck(true);
+				soundHandler.playSound("src/block.wav");
 				current = null;
 				miri = null;
 				data.removeLiness();
@@ -255,7 +262,6 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 						hold = current;
 						rotateSavePiece(hold);
 						current = next;
-						current.setSound();
 						miri = current.deepCopy();
 						pieceMake();
 						current.convertSave();
@@ -264,7 +270,6 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 						hold = current;
 						rotateSavePiece(hold);
 						current = temp;
-						current.setSound();
 						current.convertSave();
 						current.resetPosition();
 						miri = current.deepCopy();
@@ -412,6 +417,7 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 	}
 	
 	public void gameCheck(boolean downSetting) {
+		if(current==null) return;
 		if(current.copy(downSetting)) {
 			stop();
 //			JOptionPane.showMessageDialog(this, "게임끝\n점수: " + score);
