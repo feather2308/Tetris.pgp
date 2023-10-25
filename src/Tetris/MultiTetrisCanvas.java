@@ -10,16 +10,23 @@ import Tetris.Block.Piece;
 public class MultiTetrisCanvas extends JPanel{
 	protected Thread worker;
 	protected Color colors[];
+	protected TetrisData data;
+	protected MyTetris myTetris;
+	protected Piece current;
+	
 	protected int w = 25;
-	protected TetrisData data = new TetrisData();
 	protected int margin = 20;
 	protected boolean stop;
-	protected Piece current = new Empty(this.data);
 	
 	protected Graphics bufferGraphics = null;
 	protected Image offscreen;
 	
-	public MultiTetrisCanvas() {
+	public MultiTetrisCanvas(MyTetris myTetris) {
+		this.myTetris = myTetris;
+		
+		data = new TetrisData(this.myTetris);
+		current = new Empty(this.data);
+		
 		colors = new Color[11];
 		colors[0] = new Color(133, 133, 133);//미리보기색
 		colors[1] = new Color(255, 0, 0);	//빨간색

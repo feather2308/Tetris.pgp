@@ -3,18 +3,7 @@ package Tetris;
 import java.awt.*;
 import javax.swing.*;
 
-import Tetris.Block.AE;
-import Tetris.Block.Bar;
-import Tetris.Block.CP;
-import Tetris.Block.Dg;
-import Tetris.Block.El;
-import Tetris.Block.Er;
-import Tetris.Block.Ho;
-import Tetris.Block.Kl;
-import Tetris.Block.Kr;
-import Tetris.Block.Piece;
-import Tetris.Block.Square;
-import Tetris.Block.Tee;
+import Tetris.Block.*;
 
 import java.awt.event.*;
 
@@ -43,11 +32,16 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 	protected Image offscreen;
 	
 	protected SoundHandler soundHandler;
+	protected MyTetris myTetris = null;
 	
-	public TetrisCanvas(SoundHandler soundHandler) {
-		data = new TetrisData();
+	public TetrisCanvas(SoundHandler soundHandler, MyTetris myTetris) {
+		data = new TetrisData(myTetris);
+		
 		this.soundHandler = soundHandler;
+		this.myTetris = myTetris;
+		
 		addKeyListener(this);
+		
 		colors = new Color[11];
 		colors[0] = new Color(133, 133, 133);//미리보기색
 		colors[1] = new Color(255, 0, 0);	//빨간색
@@ -76,9 +70,9 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 		worker.start();
 
 		requestFocus();
-		MyTetris.getLblScoreLabel().setText("Score: " + data.getScore());
-		MyTetris.getLblLineLabel().setText("Line: " + data.getLine());
-		MyTetris.getLblLevelLabel().setText("Level: 1");
+		myTetris.getLblScoreLabel().setText("Score: " + data.getScore());
+		myTetris.getLblLineLabel().setText("Line: " + data.getLine());
+		myTetris.getLblLevelLabel().setText("Level: 1");
 		repaint();
 	}
 	
@@ -207,7 +201,7 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 				repaint();
 			} catch(Exception e) {System.out.println(e);}
 		}
-		try {if(MyTetris.canChange) MyTetris.getMntmMenuItem().setEnabled(true);}
+		try {if(myTetris.canChange) myTetris.getMntmMenuItem().setEnabled(true);}
 		catch(Exception e) {System.out.println(e);}
 	}
 	
@@ -282,7 +276,7 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 					if(data.getScore()>=5000) {
 						data.itemRemoveLine();
 						data.setScore(-5000);
-						MyTetris.getLblScoreLabel().setText("Score: " + data.getScore());
+						myTetris.getLblScoreLabel().setText("Score: " + data.getScore());
 						repaint();
 					}
 				}
@@ -293,7 +287,7 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 						itemChangePiece();
 						miri = current.deepCopy();
 						data.setScore(-1000);
-						MyTetris.getLblScoreLabel().setText("Score: " + data.getScore());
+						myTetris.getLblScoreLabel().setText("Score: " + data.getScore());
 						repaint();
 					}
 				}
@@ -303,7 +297,7 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 					if(data.getScore()>=15000) {
 						itemBizarrePieceCounter++;
 						data.setScore(-15000);
-						MyTetris.getLblScoreLabel().setText("Score: " + data.getScore());
+						myTetris.getLblScoreLabel().setText("Score: " + data.getScore());
 					}
 				}
 				break;

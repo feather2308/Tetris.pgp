@@ -23,8 +23,11 @@ public class TetrisData
 	
 	private boolean isAttack = false;
 	
-	public TetrisData() {
+	MyTetris myTetris = null;
+	
+	public TetrisData(MyTetris myTetris) {
 		data = new int[ROW][COL];
+		this.myTetris = myTetris;
 	}
 	
 	public int getAt(int x, int y) {
@@ -77,40 +80,40 @@ public class TetrisData
 			}
 		switch(chain) {
 			case 1:
-				score += 175 * MyTetris.getTetrisCanvas().level * chain;
+				score += 175 * myTetris.getTetrisCanvas().level * chain;
 				break;
 			case 2:
-				score += 175 * MyTetris.getTetrisCanvas().level * chain * 1.2;
+				score += 175 * myTetris.getTetrisCanvas().level * chain * 1.2;
 				break;
 			case 3:
-				score += 175 * MyTetris.getTetrisCanvas().level * chain * 1.5;
+				score += 175 * myTetris.getTetrisCanvas().level * chain * 1.5;
 				break;
 			case 4:
-				score += 175 * MyTetris.getTetrisCanvas().level * chain * 2;
+				score += 175 * myTetris.getTetrisCanvas().level * chain * 2;
 				break;
 			case 5:
-				score += 175 * MyTetris.getTetrisCanvas().level * chain * 5;
+				score += 175 * myTetris.getTetrisCanvas().level * chain * 5;
 			case 0:
 			default:
 				break;
 		}
-		MyTetris.getLblScoreLabel().setText("Score: " + score);
-		MyTetris.getLblLineLabel().setText("Line: " + line);
-		if(MyTetris.getTetrisCanvas().lineTmp != line) {
+		myTetris.getLblScoreLabel().setText("Score: " + score);
+		myTetris.getLblLineLabel().setText("Line: " + line);
+		if(myTetris.getTetrisCanvas().lineTmp != line) {
 			if((line / 10 + BASE_SPEED) >= MAX_SPEED) {
 				SPEED = MAX_SPEED - 1;
-				MyTetris.getTetrisCanvas().level = MAX_SPEED;
+				myTetris.getTetrisCanvas().level = MAX_SPEED;
 			} else {
 				SPEED = line / 10 + BASE_SPEED - 1;
-				MyTetris.getTetrisCanvas().level = line / 10 + BASE_SPEED;
+				myTetris.getTetrisCanvas().level = line / 10 + BASE_SPEED;
 			}
-			MyTetris.getLblLevelLabel().setText("Level: " + SPEED);
+			myTetris.getLblLevelLabel().setText("Level: " + SPEED);
 		}
 	}
 	
 	public synchronized void attackLiness() throws Exception {
 		if(isAttack)
-		while(MyTetris.getTetrisCanvas().aLine > 0) {
+		while(myTetris.getTetrisCanvas().aLine > 0) {
 			for(int i = 1; i < ROW; i++) {
 				for(int k = 0; k < COL; k++) {
 					data[i-1][k] = data[i][k];
@@ -118,7 +121,7 @@ public class TetrisData
 				}
 			}
 			data[ROW - 1][(int)(Math.random() * Integer.MAX_VALUE % COL)] = 0;
-			MyTetris.getTetrisCanvas().aLine--;
+			myTetris.getTetrisCanvas().aLine--;
 		}
 	}
 	
@@ -134,7 +137,7 @@ public class TetrisData
 	public void clear() {
 		line = 0;
 		score = 0;
-		MyTetris.getTetrisCanvas().level = BASE_SPEED;
+		myTetris.getTetrisCanvas().level = BASE_SPEED;
 		for(int i = 0; i < ROW; i++) {
 			for(int k = 0; k < COL; k++) {
 				data[i][k] = 0;
