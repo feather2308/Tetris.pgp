@@ -18,8 +18,9 @@ import java.util.List;
 public class MyTetris extends JFrame {	
 	public final static char gjr = '헉', huk = '헉', 헉 = '헉';
 	
-	private TetrisCanvas tetrisCanvas;
-	private MultiTetrisCanvas multiTetrisCanvas;
+	public TetrisCanvas tetrisCanvas;
+	public MultiTetrisCanvas multiTetrisCanvas;
+	
 	private JMenuItem mntmStartMenuItem;
 	private JLabel lblScoreLabel;
 	private JLabel lblLineLabel;
@@ -32,14 +33,19 @@ public class MyTetris extends JFrame {
 	private JCheckBox lobbyAttackCheckBox;
 	private JCheckBox lobbyItemCheckBox;
 	
+	JSlider volumeSlider;
+	JSlider volumeSlider_2;
+	
 	private JLabel nextPieceLabel;
 	private JLabel holdPieceLabel;
 	
 	private SoundHandler soundHandler;
 	
 	protected static boolean serverOpen = false;
-	protected static boolean connect = false;
+	protected boolean connect = false;
 	protected boolean canChange = true;
+	
+	protected int volume = 80;
 
 	private final OpenServer openServer = new OpenServer(); {
 		openServer.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -50,7 +56,7 @@ public class MyTetris extends JFrame {
 		});
 	}
 	
-	private final ConnectServer connectServer = new ConnectServer(); {
+	private final ConnectServer connectServer = new ConnectServer(this); {
 		connectServer.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		connectServer.addWindowListener(new WindowAdapter() {
 			public void windowClosed(WindowEvent e) {
@@ -59,7 +65,7 @@ public class MyTetris extends JFrame {
 		});
 	}
 	
-	private final EnemyScore enemyScore = new EnemyScore();
+	public final EnemyScore enemyScore = new EnemyScore();
 	private static final LeaderBoard leaderBoard = new LeaderBoard();
 	private static final GameOver gameOver = new GameOver();
 	private final keyHelp keyHelp = new keyHelp();
@@ -131,7 +137,7 @@ public class MyTetris extends JFrame {
 	
 	*/
 	
-	private void renderUIBase() {
+	public void renderUIBase() {
 		this.getContentPane().removeAll();
 
 		setTitle("테트리스");
@@ -197,7 +203,7 @@ public class MyTetris extends JFrame {
 		JButton baseLeaderBoardButton = new JButton("점수판 보기");
 		baseLeaderBoardButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				function.refreshLeaderBoard();
+				Function.refreshLeaderBoard();
 			}
 		});
 		
@@ -353,12 +359,13 @@ public class MyTetris extends JFrame {
 		baseMultiContentPane.add(speakerImageLabel_2, gbc_speakerImageLabel_2);
 		
 		//볼륨 조절 슬라이더
-		JSlider volumeSlider = new JSlider(JSlider.HORIZONTAL, 20, 100, 80);
-		JSlider volumeSlider_2 = new JSlider(JSlider.HORIZONTAL, 20, 100, 80);
+		volumeSlider = new JSlider(JSlider.HORIZONTAL, 20, 100, 80);
+		volumeSlider_2 = new JSlider(JSlider.HORIZONTAL, 20, 100, 80);
 		
         // 볼륨 조절 슬라이더 리스너
         volumeSlider.addChangeListener(e -> {
             int volume = volumeSlider.getValue();
+            this.volume = volume;
             volumeSlider_2.setValue(volume);
             if(volume == 20) {
             	soundHandler.controlSound(0);
@@ -377,6 +384,7 @@ public class MyTetris extends JFrame {
 		// 볼륨 조절 슬라이더 리스너
         volumeSlider_2.addChangeListener(e -> {
             int volume = volumeSlider_2.getValue();
+            this.volume = volume;
             volumeSlider.setValue(volume);
             if(volume == 20) {
             	soundHandler.controlSound(0);
@@ -393,9 +401,11 @@ public class MyTetris extends JFrame {
 		baseMultiContentPane.add(volumeSlider_2, gbc_volumeSlider_2);
 	}
 
-	private void renderUIBaseServerTab() {
+	public void renderUIBaseServerTab(int volume) {
 		CardLayout baseCardLayout =	(CardLayout)this.getContentPane().getLayout();
 		baseCardLayout.show(this.getContentPane(), "Server");
+		this.volumeSlider.setValue(volume);
+		this.volumeSlider_2.setValue(volume);
 	}
 	
 	private void renderUISingle() {
@@ -464,7 +474,7 @@ public class MyTetris extends JFrame {
 		tetrisCanvas.add(lblLevelLabel);
 	}
 	
-	private void renderUIMulti() {
+	public void renderUIMulti() {
 		this.getContentPane().removeAll();
 		
 		setTitle("테트리스 같이 놀기");
@@ -663,14 +673,14 @@ public class MyTetris extends JFrame {
 	
 	/*
 	 
-	서버 시작
+	서버 관련 메서드
 	 
 	 */
 	
 	public void doOpen() {
 		if(serverOpen) {
 			renderUILobby();
-			serverHandler sh = new serverHandler(this, openServer.port);
+			ServerHandler sh = new ServerHandler(this, openServer.port);
 			sh.start();
 		}
 	}
@@ -678,436 +688,8 @@ public class MyTetris extends JFrame {
 	public void doConnect() {
 		if(connect) {
 			renderUILobby();
-			clientHandler ch = new clientHandler(this, connectServer.ip, connectServer.port);
+			ClientHandler ch = new ClientHandler(this, connectServer.ip, connectServer.port);
 			if(connect) ch.start();
 		}
-	}
-	
-	private class serverHandler extends Thread {
-		private ServerSocket socket = null;
-		private Socket client = null;
-		private BufferedReader in = null;
-		private PrintWriter out = null;
-		
-		private MyTetris myTetris = null;
-		
-		public serverHandler(MyTetris myTetris, int port){
-			this.myTetris = myTetris;
-			try {
-				socket = new ServerSocket(port);
-			} catch (IOException e) {JOptionPane.showMessageDialog(null, e);}
-		}
-		
-		public void run() {
-			try {
-				System.out.println("헉runserver");
-				
-				client = socket.accept();
-				myTetris.getUConnectCheckBox().setSelected(true);
-				
-				in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-				out = new PrintWriter(new OutputStreamWriter(client.getOutputStream()));
-	
-				String outStr;
-	
-				while(true) {
-					outStr = (myTetris.getReadyCheckBox().isSelected() ? 1 : 0) + "p" +
-							 (myTetris.getAttackCheckBox().isSelected() ? 1 : 0) + "p" +
-							 (myTetris.getItemCheckBox().isSelected() ? 1 : 0);
-					out.println(outStr);
-					out.flush();
-		
-					if(in.read() == 1) myTetris.getUReadyCheckBox().setSelected(true);
-					else myTetris.getUReadyCheckBox().setSelected(false);
-		
-					if((myTetris.getReadyCheckBox().isSelected() ? true : false) && (myTetris.getUReadyCheckBox().isSelected() ? true : false)) break;
-				}
-				
-				renderUIMulti();
-				tetrisCanvas.start();
-				
-				outStr = "1p" + (myTetris.getAttackCheckBox().isSelected() ? 1 : 0) + "p" + (myTetris.getItemCheckBox().isSelected() ? 1 : 0);
-				out.println(outStr);
-				System.out.println(in.read());
-				
-				tetrisCanvas.data.setAttack(myTetris.getAttackCheckBox().isSelected());
-				tetrisCanvas.useItem = myTetris.getItemCheckBox().isSelected();
-				
-				try {function.handlerRun(myTetris, in, out, enemyScore);} catch(Exception e) {System.out.println(e);}
-			} catch (Exception e) {
-				JOptionPane.showMessageDialog(null, e);
-				myTetris.getUConnectCheckBox().setSelected(false);
-				try {socket.close();} catch (IOException e1) {JOptionPane.showMessageDialog(null, e1);}
-				renderUIBase();
-				renderUIBaseServerTab();
-			}
-		}
-	}
-	
-	private class clientHandler extends Thread {
-		private Socket socket = null;
-		private BufferedReader in = null;
-		private PrintWriter out = null;
-		
-		private MyTetris myTetris = null;
-		
-		public clientHandler(MyTetris myTetris, String IP, int port) {
-			this.myTetris = myTetris;
-			try {
-				socket = new Socket(IP, port);
-			} catch (Exception e) {
-				JOptionPane.showMessageDialog(null, e);
-				MyTetris.connect = false;
-				renderUIBase();
-				renderUIBaseServerTab();
-			}
-		}
-		
-		public void run() {
-			System.out.println("헉run");
-			try {
-				myTetris.getUConnectCheckBox().setSelected(connect);
-				
-				in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-				out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
-				
-				String inStr;
-				String[] inStrFix = {""};
-				
-				while(true) {
-					out.write(myTetris.getReadyCheckBox().isSelected() ? 1 : 0);
-					out.flush();
-					
-					inStr = in.readLine();
-					
-					if(inStr != null) {
-						inStrFix = function.convertStringDiv(inStr);
-						
-						if(Integer.parseInt(inStrFix[0]) == 1) myTetris.getUReadyCheckBox().setSelected(true);
-						else myTetris.getUReadyCheckBox().setSelected(false);
-						myTetris.getAttackCheckBox().setSelected(Integer.parseInt(inStrFix[1]) == 1 ? true : false);
-						myTetris.getItemCheckBox().setSelected(Integer.parseInt(inStrFix[2]) == 1 ? true : false);
-					}
-					
-					if((myTetris.getReadyCheckBox().isSelected() ? true : false) && (myTetris.getUReadyCheckBox().isSelected() ? true : false)) 
-						break;
-				}
-				
-				renderUIMulti();
-				tetrisCanvas.start();
-				
-				out.write(1);
-				System.out.println(in.readLine());
-				
-				tetrisCanvas.data.setAttack(Integer.parseInt(inStrFix[1]) == 1 ? true : false);
-				tetrisCanvas.useItem = myTetris.getItemCheckBox().isSelected();
-				
-				try {function.handlerRun(myTetris, in, out, enemyScore);} catch(Exception e) {System.out.println(e);}
-			} catch(Exception e) {
-				JOptionPane.showMessageDialog(null, e);
-				MyTetris.connect = false;
-				renderUIBase();
-				renderUIBaseServerTab();
-			}
-		}
-	}
-	
-	/*
-	
-	함수들 모음집
-	 
-	*/
-	
-	public class function {
-		public static void handlerRun(MyTetris myTetris, BufferedReader in, PrintWriter out, EnemyScore enemyScore) throws IOException {
-			boolean check = true;
-			int tempALine = 0;
-			
-			//output 변수들
-			int[][] data;
-			int[] r, c;
-			int death, score = 0, x, y, CPType, outLine, itemBPC;
-			
-			String outStr;
-			
-			//input 변수들
-			int inDeath = 0;
-			int[][] inData;
-			int[] inCPr, inCPc;
-
-			String inStr;
-			String[] inStrFix = {""};
-			
-			while(true) {
-				if(myTetris.tetrisCanvas.stop) death = 1;
-				else death = 0;
-				score = myTetris.tetrisCanvas.data.getScore();
-				data = myTetris.tetrisCanvas.data.getData();
-				outLine = myTetris.tetrisCanvas.data.getLine();
-				
-				if(myTetris.tetrisCanvas.current != null) {
-					r = myTetris.tetrisCanvas.current.getR();
-					c = myTetris.tetrisCanvas.current.getC();
-					x = myTetris.tetrisCanvas.current.getX();
-					y = myTetris.tetrisCanvas.current.getY();
-					CPType = myTetris.tetrisCanvas.current.getType();
-				}
-				else {
-					r = new int[] {0, 0, 0, 0};
-					c = new int[] {0, 0, 0, 0};
-					x = 0;
-					y = 0;
-					CPType = 8;
-				}
-				
-				itemBPC = myTetris.tetrisCanvas.itemBizarrePieceCounter;
-				
-				outStr = death + "p"									//tetrisCanvas.stop					Boolean 자료형 -> convert int 자료형
-						+ score + "p"									//tetrisCanvas.data.getScore()		int 자료형
-						+ function.convertIntArrayToString(data) + "p"	//tetrisCanvas.data.getData()		int[][] 자료형 즉, data의 data임.
-						+ function.convertIntArrayToString(r) + "p"		//tetrisCanvas.current.r			int[] 자료형
-						+ function.convertIntArrayToString(c) + "p"		//tetrisCanvas.current.c			int[] 자료형
-						+ x + "p"										//tetrisCanvas.current.center.x		int 자료형
-						+ y + "p"										//tetrisCanvas.current.center.y		int 자료형
-						+ CPType + "p"									//tetrisCanvas.current.getType()	int 자료형
-						+ outLine + "p"									//tetrisCanvas.data.getLine()		int 자료형
-						+ itemBPC;										//tetrisCanvas.itemBizarrePieceCounter int 자료형
-				
-				out.println(outStr);
-				out.flush();
-				
-				if(check) {
-					System.out.println(in.readLine());
-					check = false;
-					continue;
-				}
-				
-				inStr = in.readLine();
-				
-				if(inStr != null) {
-					inStrFix = function.convertStringDiv(inStr); 	//inStrFix[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-																	//0 = 죽음			1 = 점수				2 = data.data 테이블임.
-																	//3 = 현재조각 r[]		4 = 현재조각 c[]
-																	//5 = 현재조각 센터 x	6 = 현재조각 센터 y		7 = 현재조각 타입
-																	//8 = 데이터 라인		9 = 괴상한 조각 카운터
-					inDeath = Integer.parseInt(inStrFix[0]);
-					inData = function.convertStringToIntArray(inStrFix[2]);
-					if(inData.length == TetrisData.ROW && inData[0].length == TetrisData.COL) {
-						myTetris.multiTetrisCanvas.data.setData(function.convertStringToIntArray(inStrFix[2]));
-						myTetris.multiTetrisCanvas.repaint();
-					}
-					inCPr = function.convertStringToIntArray(inStrFix[3], true);
-					inCPc = function.convertStringToIntArray(inStrFix[4], true);
-					if(inCPr.length > 1 && inCPc.length > 1) {
-						myTetris.multiTetrisCanvas.current.setR(inCPr);
-						myTetris.multiTetrisCanvas.current.setC(inCPc);
-						myTetris.multiTetrisCanvas.current.setX(Integer.parseInt(inStrFix[5]));
-						myTetris.multiTetrisCanvas.current.setY(Integer.parseInt(inStrFix[6]));
-						myTetris.multiTetrisCanvas.current.setType(Integer.parseInt(inStrFix[7]));
-					}
-					if(tempALine != Integer.parseInt(inStrFix[8]) / 4) {
-						myTetris.tetrisCanvas.aLine += (Integer.parseInt(inStrFix[8]) / 4 - tempALine > 0 ? Integer.parseInt(inStrFix[8]) / 4 - tempALine : 0);
-						tempALine = Integer.parseInt(inStrFix[8]) / 4;
-					}
-					myTetris.tetrisCanvas.itemBizarrePieceCount = Integer.parseInt(inStrFix[9]);
-				}
-
-				if(inDeath == 1 && myTetris.tetrisCanvas.stop) break;
-			}
-			
-			outStr = 1 + "p"
-					+ score + "p"
-					+ function.convertIntArrayToString(data) + "p"
-					+ function.convertIntArrayToString(r) + "p"
-					+ function.convertIntArrayToString(c) + "p"
-					+ 0 + "p"
-					+ 0 + "p"
-					+ 8 + "p"
-					+ -1 + "p"
-					+ 0;
-			
-			out.println(outStr);
-			out.flush();
-			
-			if(inStr != null) {
-				inStrFix = function.convertStringDiv(inStr);
-				
-				inDeath = Integer.parseInt(inStrFix[0]);
-				inData = function.convertStringToIntArray(inStrFix[2]);
-				if(inData.length == TetrisData.ROW && inData[0].length == TetrisData.COL) {
-					myTetris.multiTetrisCanvas.data.setData(function.convertStringToIntArray(inStrFix[2]));
-					myTetris.multiTetrisCanvas.repaint();
-				}
-				myTetris.multiTetrisCanvas.current = null;
-			}
-			
-			enemyScore.getMeLabel().setText("Me");
-			enemyScore.getMeScoreLabel().setText(score+"");
-			enemyScore.getEnemyLabel().setText("Foe");
-			enemyScore.getEnemyScoreLabel().setText(inStrFix[1]);
-			String win;
-			if(score > Integer.parseInt(inStrFix[1])) win = "<< Win";
-			else if(score < Integer.parseInt(inStrFix[1])) win = "Win >>";
-			else win = "Draw";
-			enemyScore.getWinLabel().setText(win);
-			enemyScore.setVisible(true);
-		}
-		
-		public static String convertIntArrayToString(int[][] array) {
-	        StringBuilder sb = new StringBuilder();
-	        
-	        for (int[] row : array) {
-	            for (int num : row) {
-	                sb.append(num).append("s");
-	            }
-	            sb.append("n");
-	        }
-	        return sb.toString();
-	    }
-		
-	    public static String convertIntArrayToString(int[] array) {
-	    	StringBuilder sb = new StringBuilder();
-	    	
-	    	for(int num : array) {
-	    		sb.append(num).append("s");
-	    	}
-	    	return sb.toString();
-	    }
-	    
-	    public static int[][] convertStringToIntArray(String str) {
-	        String[] rows = str.trim().split("n");
-	        int[][] array = new int[TetrisData.ROW][TetrisData.COL];
-	        
-	        for (int i = 0; i < TetrisData.ROW; i++) {
-	            String[] nums = rows[i].trim().split("s");
-	            for (int j = 0; j < TetrisData.COL; j++) {
-	                array[i][j] = Integer.parseInt(nums[j]);
-	            }
-	        }
-	        return array;
-	    }
-	    
-	    public static int[] convertStringToIntArray(String str, boolean p) {
-	    	String[] num = str.trim().split("s");
-	    	int[] array = new int[num.length];
-	    	
-	    	for(int i = 0; i < num.length; i++) {
-	    		array[i] = Integer.parseInt(num[i]);
-	    	}
-	    	return array;
-	    }
-	    
-	    public static String[] convertStringDiv(String str) {
-	    	String[] reStr = str.trim().split("p");
-	    	return reStr;
-	    }
-	    
-	    public static String readLeaderBoard() {
-	    	String str = "";
-	    	try {
-		    	File file = new File(System.getProperty("java.io.tmpdir") + "/tlb.cTeam");
-		    	
-		    	FileReader file_reader = new FileReader(file);
-		    	int cur = 0;
-		    	while((cur = file_reader.read()) != -1) {
-		    		str = str + (char)cur;
-		    	}
-		    	file_reader.close();
-	    	} catch(Exception e) {
-	    		try {
-					str = makeLeaderBoard();
-				} catch (Exception e1) {
-					System.out.println(e);
-					System.out.println(e1);
-					return "-1";
-				}
-			}
-	    	return str;
-	    }
-	    
-	    public static void saveLeaderBoard(String str) {
-	    	try {
-				OutputStream output = new FileOutputStream(System.getProperty("java.io.tmpdir") + "/tlb.cTeam");
-				byte[] by = str.getBytes();
-				output.write(by);
-				output.close();
-			} catch (Exception e) {
-				System.out.println(e);
-			}
-	    }
-	    
-	    public static String makeLeaderBoard() throws Exception {
-	    	OutputStream output = new FileOutputStream(System.getProperty("java.io.tmpdir") + "/tlb.cTeam");
-	    	String str = "10000, AAA"
-	    			+ ", 9000, BBB"
-	    			+ ", 8000, CCC"
-	    			+ ", 7000, DDD"
-	    			+ ", 6000, EEE"
-	    			+ ", 5000, FFF"
-	    			+ ", 4000, GGG"
-	    			+ ", 3000, HHH"
-	    			+ ", 2000, III"
-	    			+ ", 1000, JJJ";
-			byte[] by = str.getBytes();
-			output.write(by);
-			output.close();
-			return str;
-	    }
-	    
-	    public static void refreshLeaderBoard() {
-	    	int i;
-	    	String leaderBoardRawData = readLeaderBoard();
-	    	
-			String[] leaderBRFix = leaderBoardRawData.split(",\\s*");
-
-			String[] strScorelist = new String[leaderBRFix.length / 2];
-			String[] strNamelist = new String[leaderBRFix.length / 2];
-			for (i = 0; i < leaderBRFix.length; i += 2) {
-			    strScorelist[i / 2] = leaderBRFix[i].replaceAll("\\s+", "");
-			    strNamelist[i / 2] = leaderBRFix[i + 1].replaceAll("\\s+", "");
-			}
-
-			i = 0;
-			for (String score : strScorelist) {
-				MyTetris.getLeaderBoard().getScoreLabel()[i].setText(score);
-				i++;
-			}
-			
-			i = 0;
-			for (String name : strNamelist) {
-				MyTetris.getLeaderBoard().getNameLabel()[i].setText(name);
-				i++;
-			}
-			MyTetris.getLeaderBoard().setVisible(true);
-	    }
-	    
-	    public static void recordLeaderBoard(int score, String name) throws Exception {
-	    	String leaderBoardRawData = readLeaderBoard();
-	    	
-	    	String[] rawData = leaderBoardRawData.split(", ");
-	        List<String> leaderBoardList = new ArrayList<>(Arrays.asList(rawData));
-	    	
-	    	for (int i = 0; i < leaderBoardList.size(); i += 2) {
-	            int currentScore = Integer.parseInt(leaderBoardList.get(i));
-	            if (score > currentScore) {
-	                leaderBoardList.add(i, name);
-	                leaderBoardList.add(i, String.valueOf(score));
-	                leaderBoardList.remove(20);
-	                leaderBoardList.remove(20);
-	                break;
-	            }
-	        }
-	    	
-	        StringBuilder newLeaderBoard = new StringBuilder();
-	        for (String item : leaderBoardList) {
-	            newLeaderBoard.append(item).append(", ");
-	        }
-	        newLeaderBoard.setLength(newLeaderBoard.length() - 2);
-
-	    	OutputStream output = new FileOutputStream(System.getProperty("java.io.tmpdir") + "/tlb.cTeam");
-			byte[] by = newLeaderBoard.toString().getBytes();
-			output.write(by);
-			output.close();
-	    }
 	}
 }

@@ -128,7 +128,7 @@ public class LeaderBoard extends JDialog {
 					resetButton.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
 							try {
-								MyTetris.function.makeLeaderBoard();
+								Function.makeLeaderBoard();
 								dispose();
 							} catch (Exception e1) {
 								e1.printStackTrace();

@@ -79,7 +79,7 @@ public class RecordScore extends JDialog {
 				recordButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						try {
-							MyTetris.function.recordLeaderBoard(Integer.parseInt(textScoreField.getText()), textNameField.getText());
+							Function.recordLeaderBoard(Integer.parseInt(textScoreField.getText()), textNameField.getText());
 							dispose();
 							MyTetris.getGameOver().dispose();
 						} catch (Exception e1) {

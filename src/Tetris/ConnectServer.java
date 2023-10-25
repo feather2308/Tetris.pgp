@@ -21,26 +21,30 @@ public class ConnectServer extends JDialog {
 	private final JPanel contentPanel = new JPanel();
 	private JTextField textIPField;
 	private JTextField textPortField;
+	
 	String ip;
 	int port;
+	MyTetris myTetris = null;
 
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		try {
-			ConnectServer dialog = new ConnectServer();
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+//	public static void main(String[] args) {
+//		try {
+//			ConnectServer dialog = new ConnectServer();
+//			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+//			dialog.setVisible(true);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 	/**
 	 * Create the dialog.
 	 */
-	public ConnectServer() {
+	public ConnectServer(MyTetris myTetris) {
+		this.myTetris = myTetris;
+		
 		setTitle("Server Connect");
 		setResizable(false);
 		setAlwaysOnTop(true);
@@ -106,7 +110,7 @@ public class ConnectServer extends JDialog {
 					public void actionPerformed(ActionEvent e) {
 						ip = textIPField.getText();
 						port = Integer.parseInt(textPortField.getText());
-						MyTetris.connect = true;
+						changeConnect(true);
 						dispose();
 					}
 				});
@@ -118,7 +122,7 @@ public class ConnectServer extends JDialog {
 				JButton cancelButton = new JButton("Cancel");
 				cancelButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						MyTetris.connect = false;
+						changeConnect(false);
 						dispose();
 					}
 				});
@@ -127,5 +131,8 @@ public class ConnectServer extends JDialog {
 			}
 		}
 	}
-
+	
+	private void changeConnect(boolean connect) {
+		myTetris.connect = connect;
+	}
 }
