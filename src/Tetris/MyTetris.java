@@ -865,8 +865,8 @@ public class MyTetris extends JFrame {
 				outStr = death + "p"									//tetrisCanvas.stop					Boolean 자료형 -> convert int 자료형
 						+ score + "p"									//tetrisCanvas.data.getScore()		int 자료형
 						+ function.convertIntArrayToString(data) + "p"	//tetrisCanvas.data.getData()		int[][] 자료형 즉, data의 data임.
-						+ function.convertIntArrayToString_1(r) + "p"	//tetrisCanvas.current.r			int[] 자료형
-						+ function.convertIntArrayToString_1(c) + "p"	//tetrisCanvas.current.c			int[] 자료형
+						+ function.convertIntArrayToString(r) + "p"		//tetrisCanvas.current.r			int[] 자료형
+						+ function.convertIntArrayToString(c) + "p"		//tetrisCanvas.current.c			int[] 자료형
 						+ x + "p"										//tetrisCanvas.current.center.x		int 자료형
 						+ y + "p"										//tetrisCanvas.current.center.y		int 자료형
 						+ CPType + "p"									//tetrisCanvas.current.getType()	int 자료형
@@ -896,8 +896,8 @@ public class MyTetris extends JFrame {
 						myTetris.multiTetrisCanvas.data.setData(function.convertStringToIntArray(inStrFix[2]));
 						myTetris.multiTetrisCanvas.repaint();
 					}
-					inCPr = function.convertStringToIntArray_1(inStrFix[3]);
-					inCPc = function.convertStringToIntArray_1(inStrFix[4]);
+					inCPr = function.convertStringToIntArray(inStrFix[3], true);
+					inCPc = function.convertStringToIntArray(inStrFix[4], true);
 					if(inCPr.length > 1 && inCPc.length > 1) {
 						myTetris.multiTetrisCanvas.current.setR(inCPr);
 						myTetris.multiTetrisCanvas.current.setC(inCPc);
@@ -918,8 +918,8 @@ public class MyTetris extends JFrame {
 			outStr = 1 + "p"
 					+ score + "p"
 					+ function.convertIntArrayToString(data) + "p"
-					+ function.convertIntArrayToString_1(r) + "p"
-					+ function.convertIntArrayToString_1(c) + "p"
+					+ function.convertIntArrayToString(r) + "p"
+					+ function.convertIntArrayToString(c) + "p"
 					+ 0 + "p"
 					+ 0 + "p"
 					+ 8 + "p"
@@ -964,6 +964,15 @@ public class MyTetris extends JFrame {
 	        }
 	        return sb.toString();
 	    }
+		
+	    public static String convertIntArrayToString(int[] array) {
+	    	StringBuilder sb = new StringBuilder();
+	    	
+	    	for(int num : array) {
+	    		sb.append(num).append("s");
+	    	}
+	    	return sb.toString();
+	    }
 	    
 	    public static int[][] convertStringToIntArray(String str) {
 	        String[] rows = str.trim().split("n");
@@ -978,16 +987,7 @@ public class MyTetris extends JFrame {
 	        return array;
 	    }
 	    
-	    public static String convertIntArrayToString_1 (int[] array) {
-	    	StringBuilder sb = new StringBuilder();
-	    	
-	    	for(int num : array) {
-	    		sb.append(num).append("s");
-	    	}
-	    	return sb.toString();
-	    }
-	    
-	    public static int[] convertStringToIntArray_1(String str) {
+	    public static int[] convertStringToIntArray(String str, boolean p) {
 	    	String[] num = str.trim().split("s");
 	    	int[] array = new int[num.length];
 	    	
