@@ -10,9 +10,6 @@ import javax.swing.border.EmptyBorder;
 
 import java.io.*;
 import java.net.*;
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.List;
 
 @SuppressWarnings("serial")
 public class MyTetris extends JFrame {	
@@ -22,9 +19,16 @@ public class MyTetris extends JFrame {
 	public MultiTetrisCanvas multiTetrisCanvas;
 	
 	private JMenuItem mntmStartMenuItem;
+	
+	//자기 라벨
 	private JLabel lblScoreLabel;
 	private JLabel lblLineLabel;
 	private JLabel lblLevelLabel;
+	
+	//상대방 라벨
+	private JLabel multiScoreLabel;
+	private JLabel multiLineLabel;
+	private JLabel multiLevelLabel;
 	
 	private JCheckBox lobbyServerConnectCheckBox;
 	private JCheckBox lobbyClientConnectCheckBox;
@@ -33,11 +37,17 @@ public class MyTetris extends JFrame {
 	private JCheckBox lobbyAttackCheckBox;
 	private JCheckBox lobbyItemCheckBox;
 	
-	JSlider volumeSlider;
-	JSlider volumeSlider_2;
+	//음성 조절 슬라이더
+	private JSlider volumeSlider;
+	private JSlider volumeSlider_2;
 	
+	//자기 피스 라벨
 	private JLabel nextPieceLabel;
 	private JLabel holdPieceLabel;
+	
+	//상대방 피스 라벨
+	private JLabel multiNextPieceLabel;
+	private JLabel multiHoldPieceLabel;
 	
 	private SoundHandler soundHandler;
 	
@@ -94,6 +104,8 @@ public class MyTetris extends JFrame {
 	public TetrisCanvas getTetrisCanvas() {
 		return tetrisCanvas;
 	}
+	
+	//자기 라벨
 	public JLabel getLblScoreLabel() {
 		return lblScoreLabel;
 	}
@@ -103,6 +115,18 @@ public class MyTetris extends JFrame {
 	public JLabel getLblLevelLabel() {
 		return lblLevelLabel;
 	}
+	
+	//상대방 라벨
+	public JLabel getMultiScoreLabel() {
+		return multiScoreLabel;
+	}
+	public JLabel getMultiLineLabel() {
+		return multiLineLabel;
+	}
+	public JLabel getMultiLevelLabel() {
+		return multiLevelLabel;
+	}
+	
 	public JMenuItem getMntmMenuItem() {
 		return mntmStartMenuItem;
 	}
@@ -478,16 +502,16 @@ public class MyTetris extends JFrame {
 		this.getContentPane().removeAll();
 		
 		setTitle("테트리스 같이 놀기");
-		setBounds(getBounds().x, getBounds().y, 650, 600);
+		setBounds(getBounds().x, getBounds().y, 750, 600);
 		
 		JPanel multiContentPane = new JPanel();
 		multiContentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		this.setContentPane(multiContentPane);
 		this.revalidate();	
-		multiContentPane.setLayout(new BorderLayout(0, 0));
+		multiContentPane.setLayout(new GridLayout(1, 2));
 		
 		tetrisCanvas = new TetrisCanvas(soundHandler, this);
-		multiContentPane.add(tetrisCanvas, BorderLayout.CENTER);
+		multiContentPane.add(tetrisCanvas);
 		tetrisCanvas.setLayout(null);
 		
 		nextPieceLabel = new JLabel("-NEXT-");
@@ -516,8 +540,33 @@ public class MyTetris extends JFrame {
 		tetrisCanvas.add(lblLevelLabel);
 		
 		multiTetrisCanvas = new MultiTetrisCanvas(this);
-		multiContentPane.add(multiTetrisCanvas, BorderLayout.EAST);
+		multiContentPane.add(multiTetrisCanvas);
 		multiTetrisCanvas.setLayout(null);
+		
+		multiNextPieceLabel = new JLabel("-NEXT-");
+		multiNextPieceLabel.setBounds(285, 40, 45, 15);
+		multiNextPieceLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		multiTetrisCanvas.add(multiNextPieceLabel);
+		
+		multiHoldPieceLabel = new JLabel("-HOLD-");
+		multiHoldPieceLabel.setBounds(285, 130, 44, 15);
+		multiHoldPieceLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		multiTetrisCanvas.add(multiHoldPieceLabel);
+		
+		multiScoreLabel = new JLabel("Score");
+		multiScoreLabel.setBounds(270, 475, 95, 15);
+		multiScoreLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		multiTetrisCanvas.add(multiScoreLabel);
+		
+		multiLineLabel = new JLabel("Line");
+		multiLineLabel.setBounds(270, 495, 60, 15);
+		multiLineLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		multiTetrisCanvas.add(multiLineLabel);
+		
+		multiLevelLabel = new JLabel("Level");
+		multiLevelLabel.setBounds(270, 515, 60, 15);
+		multiLevelLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		multiTetrisCanvas.add(multiLevelLabel);
 	}
 	
 	private void renderUILobby() {

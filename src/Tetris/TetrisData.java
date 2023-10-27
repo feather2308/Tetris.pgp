@@ -13,7 +13,7 @@ public class TetrisData
 							MAX_SPEED = 31,
 							BASE_SPEED = 2;
 
-	public static int SPEED = BASE_SPEED;
+	public int SPEED = BASE_SPEED;
 	
 	private int data[][];
 	private

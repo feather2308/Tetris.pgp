@@ -25,6 +25,7 @@ public class SoundHandler {
                 public void update(LineEvent event) {
                     if (event.getType() == LineEvent.Type.STOP) {
                         try {
+                        	clip.close();
                             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(soundFile);
                             clip.open(audioInputStream);
                             clip.start();
