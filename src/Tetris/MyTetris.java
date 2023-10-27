@@ -57,7 +57,7 @@ public class MyTetris extends JFrame {
 	
 	protected int volume = 80;
 
-	private final OpenServer openServer = new OpenServer(); {
+	private final OpenServer openServer = new OpenServer(this); {
 		openServer.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		openServer.addWindowListener(new WindowAdapter() {
 			public void windowClosed(WindowEvent e) {
@@ -311,6 +311,7 @@ public class MyTetris extends JFrame {
 		JButton baseServerMultiPlayButton = new JButton("서버 접속하기");
 		baseServerMultiPlayButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				connectServer.setBounds(connectServer.getBoundX(), connectServer.getBoundY(), 235, 150);
 				connectServer.setVisible(true);
 			}
 		});
@@ -319,6 +320,7 @@ public class MyTetris extends JFrame {
 		JButton baseServerSinglePlayButton = new JButton("서버 열기");
 		baseServerSinglePlayButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				openServer.setBounds(openServer.getBoundX(), openServer.getBoundY(), 235, 150);
 				openServer.setVisible(true);
 			}
 		});

@@ -135,4 +135,12 @@ public class ConnectServer extends JDialog {
 	private void changeConnect(boolean connect) {
 		myTetris.connect = connect;
 	}
+
+	public int getBoundX() {
+		return myTetris.getBounds().x;
+	}
+	
+	public int getBoundY() {
+		return myTetris.getBounds().y;
+	}
 }

@@ -23,25 +23,28 @@ public class OpenServer extends JDialog {
 	private final JPanel contentPanel = new JPanel();
 	private JTextField textIPField;
 	private JTextField textPortField;
+	private MyTetris myTetris;
 	int port;
 
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		try {
-			OpenServer dialog = new OpenServer();
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+//	public static void main(String[] args) {
+//		try {
+//			OpenServer dialog = new OpenServer();
+//			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+//			dialog.setVisible(true);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 	/**
 	 * Create the dialog.
 	 */
-	public OpenServer() {
+	public OpenServer(MyTetris myTetris) {
+		this.myTetris = myTetris;
+		
 		setResizable(false);
 		setTitle("Server Open");
 		setBounds(100, 100, 235, 150);
@@ -130,4 +133,11 @@ public class OpenServer extends JDialog {
 		}
 	}
 
+	public int getBoundX() {
+		return myTetris.getBounds().x;
+	}
+	
+	public int getBoundY() {
+		return myTetris.getBounds().y;
+	}
 }
