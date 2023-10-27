@@ -15,6 +15,9 @@ import java.net.*;
 public class MyTetris extends JFrame {	
 	public final static char gjr = '헉', huk = '헉', 헉 = '헉';
 	
+	private final String bgm = "src/bgm.wav", speaker = "src/speaker.png";
+	public final String block = "src/block.wav";
+	
 	public TetrisCanvas tetrisCanvas;
 	public MultiTetrisCanvas multiTetrisCanvas;
 	
@@ -77,7 +80,7 @@ public class MyTetris extends JFrame {
 	
 	public final EnemyScore enemyScore = new EnemyScore();
 	private static final LeaderBoard leaderBoard = new LeaderBoard();
-	private static final GameOver gameOver = new GameOver();
+	private final GameOver gameOver = new GameOver(this);
 	private final keyHelp keyHelp = new keyHelp();
 	
 	public static void main(String[] args) {
@@ -97,7 +100,7 @@ public class MyTetris extends JFrame {
 		setBounds(100, 100, 350, 500);
 		renderUIBase();
 		
-		soundHandler = new SoundHandler("src/bgm.wav");
+		soundHandler = new SoundHandler(bgm);
 		soundHandler.controlSound(0.8f);
 	}
 
@@ -133,7 +136,7 @@ public class MyTetris extends JFrame {
 	public static LeaderBoard getLeaderBoard() {
 		return leaderBoard;
 	}
-	public static GameOver getGameOver() {
+	public GameOver getGameOver() {
 		return gameOver;
 	}
 	public JCheckBox getUConnectCheckBox() {
@@ -362,7 +365,7 @@ public class MyTetris extends JFrame {
 		JLabel speakerImageLabel_2 = new JLabel();
 		BufferedImage image;
 		try {
-			image = ImageIO.read(new File("src/speaker.png"));
+			image = ImageIO.read(new File(speaker));
 
 			speakerImageLabel.setIcon(new ImageIcon(image.getScaledInstance(16, 16, Image.SCALE_SMOOTH)));
 			speakerImageLabel_2.setIcon(new ImageIcon(image.getScaledInstance(16, 16, Image.SCALE_SMOOTH)));

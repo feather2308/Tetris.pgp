@@ -24,20 +24,20 @@ public class RecordScore extends JDialog {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		try {
-			RecordScore dialog = new RecordScore();
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+//	public static void main(String[] args) {
+//		try {
+//			RecordScore dialog = new RecordScore();
+//			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+//			dialog.setVisible(true);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 	/**
 	 * Create the dialog.
 	 */
-	public RecordScore() {
+	public RecordScore(MyTetris myTetris) {
 		setResizable(false);
 		setTitle("RecordScore");
 		setBounds(100, 100, 180, 120);
@@ -81,11 +81,11 @@ public class RecordScore extends JDialog {
 						try {
 							Function.recordLeaderBoard(Integer.parseInt(textScoreField.getText()), textNameField.getText());
 							dispose();
-							MyTetris.getGameOver().dispose();
+							myTetris.getGameOver().dispose();
 						} catch (Exception e1) {
 							e1.printStackTrace();
 							dispose();
-							MyTetris.getGameOver().dispose();
+							myTetris.getGameOver().dispose();
 						}
 					}
 				});

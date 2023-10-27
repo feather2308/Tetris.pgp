@@ -18,25 +18,27 @@ public class GameOver extends JDialog {
 	private final JPanel contentPanel = new JPanel();
 	private JLabel lblScoreLabel;
 	
-	private final RecordScore recordScore = new RecordScore();
+	private final RecordScore recordScore;
 
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		try {
-			GameOver dialog = new GameOver();
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+//	public static void main(String[] args) {
+//		try {
+//			GameOver dialog = new GameOver();
+//			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+//			dialog.setVisible(true);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 	/**
 	 * Create the dialog.
 	 */
-	public GameOver() {
+	public GameOver(MyTetris myTetris) {
+		recordScore = new RecordScore(myTetris);
+		
 		setResizable(false);
 		setTitle("GameOver");
 		setBounds(100, 100, 210, 120);
