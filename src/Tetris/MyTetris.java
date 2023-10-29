@@ -15,12 +15,10 @@ import java.net.*;
 public class MyTetris extends JFrame {	
 	public final static char gjr = '헉', huk = '헉', 헉 = '헉';
 	
-	private final String bgm = "src/bgm.wav", speaker = "src/speaker.png";
-	public final String block = "src/block.wav";
-	
 	public TetrisCanvas tetrisCanvas;
 	public MultiTetrisCanvas multiTetrisCanvas;
 	
+	public JTextField baseTetrisText;
 	private JMenuItem mntmStartMenuItem;
 	
 	//자기 라벨
@@ -81,7 +79,7 @@ public class MyTetris extends JFrame {
 	public final EnemyScore enemyScore = new EnemyScore();
 	private static final LeaderBoard leaderBoard = new LeaderBoard();
 	private final GameOver gameOver = new GameOver(this);
-	private final keyHelp keyHelp = new keyHelp();
+	private final keyHelp keyHelp = new keyHelp(this);
 	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -100,7 +98,7 @@ public class MyTetris extends JFrame {
 		setBounds(100, 100, 350, 500);
 		renderUIBase();
 		
-		soundHandler = new SoundHandler(bgm);
+		soundHandler = new SoundHandler("/bgm.wav");
 		soundHandler.controlSound(0.8f);
 	}
 
@@ -199,7 +197,7 @@ public class MyTetris extends JFrame {
 		gbl_baseContentPane.rowWeights = new double[]{0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 		baseContentPane.setLayout(gbl_baseContentPane);
 	
-		JTextField baseTetrisText = new JTextField();
+		baseTetrisText = new JTextField();
 		baseTetrisText.setEditable(false);
 		baseTetrisText.setHorizontalAlignment(SwingConstants.CENTER);
 		baseTetrisText.setText("TETRIS");
@@ -244,6 +242,7 @@ public class MyTetris extends JFrame {
 		JButton baseKeyHelpButton = new JButton("도움말");
 		baseKeyHelpButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				keyHelp.setBounds(keyHelp.getBoundX(), keyHelp.getBoundY(), 235, 150);;
 				keyHelp.setVisible(true);
 			}
 		});
@@ -365,8 +364,7 @@ public class MyTetris extends JFrame {
 		JLabel speakerImageLabel_2 = new JLabel();
 		BufferedImage image;
 		try {
-			image = ImageIO.read(new File(speaker));
-
+			image = ImageIO.read(getClass().getResourceAsStream("/speaker.png"));
 			speakerImageLabel.setIcon(new ImageIcon(image.getScaledInstance(16, 16, Image.SCALE_SMOOTH)));
 			speakerImageLabel_2.setIcon(new ImageIcon(image.getScaledInstance(16, 16, Image.SCALE_SMOOTH)));
 		} catch (IOException e1) {

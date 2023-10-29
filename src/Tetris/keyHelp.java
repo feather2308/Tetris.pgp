@@ -20,24 +20,27 @@ import java.awt.event.ActionEvent;
 public class keyHelp extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
+	private MyTetris myTetris;
 
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		try {
-			keyHelp dialog = new keyHelp();
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+//	public static void main(String[] args) {
+//		try {
+//			keyHelp dialog = new keyHelp();
+//			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+//			dialog.setVisible(true);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 	/**
 	 * Create the dialog.
 	 */
-	public keyHelp() {
+	public keyHelp(MyTetris myTetris) {
+		this.myTetris = myTetris;
+		
 		setResizable(false);
 		setTitle("도움말");
 		setBounds(100, 100, 600, 300);
@@ -123,4 +126,11 @@ public class keyHelp extends JDialog {
 		}
 	}
 
+	public int getBoundX() {
+		return myTetris.getBounds().x;
+	}
+	
+	public int getBoundY() {
+		return myTetris.getBounds().y;
+	}
 }

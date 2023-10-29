@@ -104,11 +104,11 @@ public class MultiTetrisCanvas extends JPanel{
 		g.drawImage(offscreen, 0, 0, null);
 	}
 	
-	public Dimension getPreferredSize() {
-		int tw = w * TetrisData.COL + margin;
-		int th = w * TetrisData.ROW + margin;
-		return new Dimension(tw, th);
-	}
+//	public Dimension getPreferredSize() {
+//		int tw = w * TetrisData.COL + margin;
+//		int th = w * TetrisData.ROW + margin;
+//		return new Dimension(tw, th);
+//	}
 	
 	private int getXPaint(Piece piece) {
 		switch(piece.getMaxX() - piece.getMinX()) {

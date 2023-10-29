@@ -145,14 +145,14 @@ public class TetrisData
 		}
 	}
 	
-	public void dump() {
-		for(int i = 0; i < ROW; i++) {
-			for(int k = 0; k < COL; k++) {
-				System.out.print(data[i][k] + " ");
-			}
-			System.out.println();
-		}
-	}
+//	public void dump() {
+//		for(int i = 0; i < ROW; i++) {
+//			for(int k = 0; k < COL; k++) {
+//				System.out.print(data[i][k] + " ");
+//			}
+//			System.out.println();
+//		}
+//	}
 	
 	public int[][] getData() {
 		return data;

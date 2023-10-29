@@ -1,6 +1,8 @@
 package Tetris;
 
-import java.io.File;
+import java.io.BufferedInputStream;
+//import java.io.File;
+import java.io.InputStream;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -16,8 +18,10 @@ public class SoundHandler {
 	float volume = 0.8f;
 	
 	public SoundHandler(String filename) {
-        try {
-            File soundFile = new File(filename);
+        try {        	
+//            File soundFile = new File(filename);
+        	InputStream InputStream = getClass().getResourceAsStream(filename);
+            
             clip = AudioSystem.getClip();
 
             clip.addLineListener(new LineListener() {
@@ -26,8 +30,8 @@ public class SoundHandler {
                     if (event.getType() == LineEvent.Type.STOP) {
                         try {
                         	clip.close();
-                            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(soundFile);
-                            clip.open(audioInputStream);
+                            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new BufferedInputStream(InputStream));
+                        	clip.open(audioInputStream);
                             clip.start();
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -35,8 +39,7 @@ public class SoundHandler {
                     }
                 }
             });
-
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(soundFile);
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new BufferedInputStream(InputStream));
             clip.open(audioInputStream);
             clip.start();
             
@@ -61,7 +64,8 @@ public class SoundHandler {
     
     public void playSound(String filename) { // 효과음용
         try {
-            File soundFile = new File(filename);
+//            File soundFile = new File(filename);
+        	InputStream InputStream = getClass().getResourceAsStream(filename);
             final Clip clip = AudioSystem.getClip();
             clip.addLineListener(new LineListener() {
                 @Override
@@ -72,7 +76,8 @@ public class SoundHandler {
                     }
                 }
             });
-            clip.open(AudioSystem.getAudioInputStream(soundFile));
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new BufferedInputStream(InputStream));
+            clip.open(audioInputStream);
             
             // FloatControl을 여기서 얻음
             gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);

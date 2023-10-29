@@ -293,6 +293,7 @@ public class Function {
 		else if(score < Integer.parseInt(inStrFix[1])) win = "Win >>";
 		else win = "Draw";
 		enemyScore.getWinLabel().setText(win);
+		enemyScore.setBounds(myTetris.getBounds().x, myTetris.getBounds().y, 280, 120);
 		enemyScore.setVisible(true);
 	}
 	
@@ -348,7 +349,7 @@ public class Function {
     public static String readLeaderBoard() {
     	String str = "";
     	try {
-	    	File file = new File(System.getProperty("java.io.tmpdir") + "/tlb.cTeam");
+	    	File file = new File(System.getProperty("java.io.tmpdir") + "/tlb.ksw");
 	    	
 	    	FileReader file_reader = new FileReader(file);
 	    	int cur = 0;
@@ -370,7 +371,7 @@ public class Function {
     
     public static void saveLeaderBoard(String str) {
     	try {
-			OutputStream output = new FileOutputStream(System.getProperty("java.io.tmpdir") + "/tlb.cTeam");
+			OutputStream output = new FileOutputStream(System.getProperty("java.io.tmpdir") + "/tlb.ksw");
 			byte[] by = str.getBytes();
 			output.write(by);
 			output.close();
@@ -380,7 +381,7 @@ public class Function {
     }
     
     public static String makeLeaderBoard() throws Exception {
-    	OutputStream output = new FileOutputStream(System.getProperty("java.io.tmpdir") + "/tlb.cTeam");
+    	OutputStream output = new FileOutputStream(System.getProperty("java.io.tmpdir") + "/tlb.ksw");
     	String str = "10000, AAA"
     			+ ", 9000, BBB"
     			+ ", 8000, CCC"
@@ -447,7 +448,7 @@ public class Function {
         }
         newLeaderBoard.setLength(newLeaderBoard.length() - 2);
 
-    	OutputStream output = new FileOutputStream(System.getProperty("java.io.tmpdir") + "/tlb.cTeam");
+    	OutputStream output = new FileOutputStream(System.getProperty("java.io.tmpdir") + "/tlb.ksw");
 		byte[] by = newLeaderBoard.toString().getBytes();
 		output.write(by);
 		output.close();

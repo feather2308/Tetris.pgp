@@ -75,6 +75,7 @@ public class GameOver extends JDialog {
 				JButton cancelButton = new JButton("점수 기록하기");
 				cancelButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
+						recordScore.setBounds(recordScore.getBoundX(), recordScore.getBoundY(), 180, 120);
 						recordScore.setVisible(true);
 					}
 				});

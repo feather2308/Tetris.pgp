@@ -188,7 +188,7 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 					if(current.moveDown()) {
 						makeNew = true;
 						gameCheck(true);
-						soundHandler.playSound(myTetris.block);
+						soundHandler.playSound("/block.wav");
 						current = null;
 						miri = null;
 						data.removeLiness();
@@ -229,7 +229,7 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 				if(current.moveDown()) {
 					makeNew = true;
 					gameCheck(true);
-					soundHandler.playSound(myTetris.block);
+					soundHandler.playSound("/block.wav");
 					current = null;
 					miri = null;
 					data.removeLiness();
@@ -242,7 +242,7 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 				while(!current.moveDown()) data.setScore(10);
 				makeNew = true;
 				gameCheck(true);
-				soundHandler.playSound(myTetris.block);
+				soundHandler.playSound("/block.wav");
 				current = null;
 				miri = null;
 				data.removeLiness();
@@ -417,6 +417,7 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 //			JOptionPane.showMessageDialog(this, "게임끝\n점수: " + score);
 			myTetris.getGameOver().getScoreLabel().setText("점수: " + data.getScore());
 			myTetris.getGameOver().getRecordScore().getScoreField().setText(data.getScore() + "");
+			myTetris.getGameOver().setBounds(myTetris.getBounds().x, myTetris.getBounds().y,210,120);
 			myTetris.getGameOver().setVisible(true);
 		}
 	}

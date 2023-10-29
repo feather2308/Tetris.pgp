@@ -20,6 +20,7 @@ public class RecordScore extends JDialog {
 	private final JPanel contentPanel = new JPanel();
 	private JTextField textNameField;
 	private JTextField textScoreField;
+	private MyTetris myTetris;
 
 	/**
 	 * Launch the application.
@@ -38,6 +39,8 @@ public class RecordScore extends JDialog {
 	 * Create the dialog.
 	 */
 	public RecordScore(MyTetris myTetris) {
+		this.myTetris = myTetris;
+		
 		setResizable(false);
 		setTitle("RecordScore");
 		setBounds(100, 100, 180, 120);
@@ -108,5 +111,13 @@ public class RecordScore extends JDialog {
 
 	public JTextField getScoreField() {
 		return textScoreField;
+	}
+	
+	public int getBoundX() {
+		return myTetris.getBounds().x;
+	}
+	
+	public int getBoundY() {
+		return myTetris.getBounds().y;
 	}
 }
