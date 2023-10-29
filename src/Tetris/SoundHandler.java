@@ -30,6 +30,7 @@ public class SoundHandler {
                     if (event.getType() == LineEvent.Type.STOP) {
                         try {
                         	clip.close();
+                        	InputStream InputStream = getClass().getResourceAsStream(filename);
                             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new BufferedInputStream(InputStream));
                         	clip.open(audioInputStream);
                             clip.start();

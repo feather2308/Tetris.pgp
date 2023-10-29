@@ -242,7 +242,7 @@ public class MyTetris extends JFrame {
 		JButton baseKeyHelpButton = new JButton("도움말");
 		baseKeyHelpButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				keyHelp.setBounds(keyHelp.getBoundX(), keyHelp.getBoundY(), 235, 150);;
+				keyHelp.setBounds(keyHelp.getBoundX(), keyHelp.getBoundY(), 600, 300);
 				keyHelp.setVisible(true);
 			}
 		});

@@ -257,6 +257,19 @@ public class Function {
 			if(inDeath == 1 && myTetris.tetrisCanvas.stop) break;
 		}
 		
+		//이전
+//		outStr = 1 + "p"
+//				+ score + "p"
+//				+ Function.convertIntArrayToString(data) + "p"
+//				+ Function.convertIntArrayToString(r) + "p"
+//				+ Function.convertIntArrayToString(c) + "p"
+//				+ 0 + "p"
+//				+ 0 + "p"
+//				+ 8 + "p"
+//				+ -1 + "p"
+//				+ 0;
+		
+		//next 피스 및 hold 피스 + level 추가
 		outStr = 1 + "p"
 				+ score + "p"
 				+ Function.convertIntArrayToString(data) + "p"
@@ -266,8 +279,18 @@ public class Function {
 				+ 0 + "p"
 				+ 8 + "p"
 				+ -1 + "p"
+				+ 0 + "p"
+				+ Function.convertIntArrayToString(rN) + "p"
+				+ Function.convertIntArrayToString(cN) + "p"
+				+ 0 + "p"
+				+ 0 + "p"
+				+ 8 + "p"
+				+ Function.convertIntArrayToString(rN) + "p"
+				+ Function.convertIntArrayToString(cN) + "p"
+				+ 0 + "p"
+				+ 0 + "p"
+				+ 8 + "p"
 				+ 0;
-		//TODO next 피스 및 hold 피스 + level 추가 된거 수정해야 함.
 		
 		out.println(outStr);
 		out.flush();
